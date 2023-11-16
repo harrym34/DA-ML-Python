@@ -9,9 +9,13 @@ def main():
     # Append 1's to create the design matrix
     xmat = np.column_stack((xvec, np.ones_like(xvec)))
 
+    # Hyper-parameter theta is the maximum norm allowed of the solution vector w*. 
+    # Changing this will drastically change the performance of the model.
     theta = 8
 
-    # Part (A): compare OLS and CLS on all of the data
+    #
+    # Compare OLS and CLS on all of the data
+    #
 
     # Compute the ordinary least squares from the normal equation
     w_ols = np.linalg.inv(xmat.T @ xmat) @ xmat.T @ yvec
