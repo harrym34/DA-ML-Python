@@ -1,3 +1,26 @@
+"""
+CONTRAINED LEAST SQUARES IN PYTHON
+
+Harry Michell, November 2023
+
+Overview:
+The file cls.py contains a set of functions and a main program for performing 
+Constrained Least Squares (CLS) linear fitting on a dataset. 
+
+Dependencies:
+- numpy
+- matplotlib
+- scipy
+
+Notes:
+ - The script assumes that the input data is generated using the clsdata function.
+ - Adjust the threshold (theta) as needed for CLS.
+ - The script uses random number generation for k-fold cross-validation; 
+   you may adjust the seed for reproducibility (np.random.seed()).
+
+   Enjoy!
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import fsolve
