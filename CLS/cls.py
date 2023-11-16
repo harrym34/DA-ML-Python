@@ -18,7 +18,7 @@ Notes:
  - The script uses random number generation for k-fold cross-validation; 
    you may adjust the seed for reproducibility (np.random.seed()).
 
-   Enjoy!
+Enjoy!
 """
 
 import numpy as np
