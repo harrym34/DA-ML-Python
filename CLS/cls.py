@@ -2,6 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import fsolve
 
+"""
+Generate data, perform regression, compute 5-fold cross validation
+"""
+
 def main():
     # Get data
     xvec, yvec = clsdata()
@@ -57,7 +61,7 @@ def main():
     for i in range(nreps):
         cls_train_vec[i], cls_test_vec[i] = clskfold(xmat, yvec, theta, 5)
 
-    # Compute means and standard deviations of results
+    # Compute means and standard deviations of results (terse code?)
     ols_train_mean, ols_train_std_dev = np.mean(ols_train_vec), np.std(ols_train_vec)
     ols_test_mean, ols_test_std_dev = np.mean(ols_test_vec), np.std(ols_test_vec)
     cls_train_mean, cls_train_std_dev = np.mean(cls_train_vec), np.std(cls_train_vec)
@@ -73,7 +77,12 @@ def main():
     print(f'   CLS means and std. dev. are\n    {cls_train_mean:.4f}    {cls_test_mean:.4f}\n'
           f'    {cls_train_std_dev:.4f}    {cls_test_std_dev:.4f}')
 
+"""
+Custom k-fold cross-validation function
+"""
 def clskfold(xmat, yvec, theta, k_in):
+
+    # Problem size
     M = xmat.shape[0]
 
     # Set the number of folds; must be 1 < k < M
@@ -105,27 +114,42 @@ def clskfold(xmat, yvec, theta, k_in):
     rmstest = np.sqrt(var_test / k)
     return rmstrain, rmstest
 
+"""
+Constrained Least Squares (CLS) Function: Performs CLS computations
+"""
 def cls(xmat, yvec, theta):
+
+    # Return immediately if the threshold is invalid
     if theta < 0:
         return None, None
 
+    # Set up the problem as xmat*w=yvec
     Im = np.eye(xmat.shape[1])
+
+    # Set up w and g functions for CLS computations
     wfun = lambda lval: np.linalg.inv(xmat.T @ xmat + lval * Im) @ xmat.T @ yvec
     gfun = lambda lval: np.linalg.norm(wfun(lval))**2 - theta
 
+    # OLS solution: use pseudo-inverse for ill conditioned matrix
     wls = np.linalg.pinv(xmat) @ yvec
 
+    # The OLS solution is used if it is within the user's threshold
     if np.linalg.norm(wls)**2 <= theta or theta <= 0:
         return wls, 0
     else:
+
+        # Estimate lambda using gfun, wfun, and fzero.
         lambda_val = fsolve(gfun, 0)
         w_cls = wfun(lambda_val)
         return w_cls, lambda_val
 
 
 def clsdata():
+    # x values are equally spaced
     xvec = np.linspace(0, 9, 10)
     ylin = np.exp(1) * xvec + np.pi
+    
+    # Y are linear, deviating first and last
     # Using 1D arrays for concatenation
     yvec = np.concatenate(([ylin[0] - 5], ylin[1:-1], [ylin[-1] + 3]))
     return xvec, yvec
